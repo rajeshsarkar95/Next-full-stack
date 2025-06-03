@@ -1,8 +1,8 @@
 "use client";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 
 function SignupPage() {
@@ -12,9 +12,8 @@ function SignupPage() {
     password: "",
     username: "",
   });
-
-  const [buttonDisabled, setButtonDisabled] = React.useState(true); 
-  const [loading, setLoading] = React.useState(false); 
+  const [buttonDisabled, setButtonDisabled] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
   const onSignup = async () => {
     try {
       setLoading(true);
@@ -22,13 +21,18 @@ function SignupPage() {
       console.log("Signup success", response.data);
       toast.success("Signup successful!");
       router.push("/login");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || error.message);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || error.message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     const allFieldsFilled =
       user.email.length > 0 &&
@@ -36,13 +40,11 @@ function SignupPage() {
       user.username.length > 0;
     setButtonDisabled(!allFieldsFilled);
   }, [user]);
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <h1 className="text-2xl font-bold mb-4">
         {loading ? "Processing..." : "Signup"}
       </h1>
-
       <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-md space-y-4">
         <div className="flex flex-col">
           <label htmlFor="username" className="mb-1 text-gray-700 font-medium">
@@ -57,7 +59,6 @@ function SignupPage() {
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div className="flex flex-col">
           <label htmlFor="email" className="mb-1 text-gray-700 font-medium">
             Email
@@ -71,7 +72,6 @@ function SignupPage() {
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div className="flex flex-col">
           <label htmlFor="password" className="mb-1 text-gray-700 font-medium">
             Password
@@ -85,7 +85,6 @@ function SignupPage() {
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <button
           onClick={onSignup}
           disabled={buttonDisabled}
@@ -95,7 +94,6 @@ function SignupPage() {
         >
           {loading ? "Signing up..." : "Signup"}
         </button>
-
         <p className="text-sm text-center mt-2">
           Already have an account?{" "}
           <Link href="/login" className="text-blue-600 underline">
@@ -106,5 +104,4 @@ function SignupPage() {
     </div>
   );
 }
-
 export default SignupPage;

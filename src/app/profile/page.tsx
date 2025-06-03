@@ -7,7 +7,6 @@ export default function Profilepage() {
       <hr />
       <p>profile</p>
     </div>
-
   )
 }
 

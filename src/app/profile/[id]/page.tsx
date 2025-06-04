@@ -1,10 +1,10 @@
 import React from "react";
 
-interface UserProfileProps{
-  params:{
+type UserProfileProps = {
+  params: {
     id: string;
   };
-}
+};
 export default function userProfile({ params }:UserProfileProps) {
   return (
     <div>
